@@ -1,0 +1,51 @@
+C*****************************************************************
+C*** Variablen
+C*****************************************************************
+
+H=300		!Höhe des Blechs
+B=160		!Breite des Blechs
+t=2		!Dicke des Blechs
+a=28	!Halbe Risslänge
+Force=15000	!Zugkraft
+R=0.1
+
+
+nel=4		!Anzahl Elemente in Dickenrichtung des restlichen Modells
+
+steps=40	!Anzahl der Rechenschritt
+nnssteps=100	! Diskretisierung des letzten Zyklus
+esi=0.08		!Esize inneres Rechteck
+esd=0.08		!Esize in Dickenrichtung
+offset=steps*esi	!Verschiebung der Rissspitze in -x Richtung
+
+integ=0		!J-Integral und VCCT berechnen (0=nein, 1=ja)
+harde=1		!Verfestigungsgesetz anwenden (0=nein, 1=ja)
+ani=0		!Anisotropie anwenden (0=nein, 1=ja)
+
+r1=3.5		!inneres Rechteck - Ausdehnung nach links
+r2=3.2		!inneres Rechteck - Ausdehnung nach rechts	
+r3=1.0		!inneres Rechteck - Höhe
+
+C*****************************************************************
+C*** Modelparameter anpassen
+C*****************************************************************
+
+a= a-offset
+
+C*****************************************************************
+C*** Solution
+C*****************************************************************
+
+*DIM,loadtab,ARRAY,11,1
+loadtab(1,1) = 0.814
+loadtab(2,1) = 0.887
+loadtab(3,1) = 0.922
+loadtab(4,1) = 0.943
+loadtab(5,1) = 0.961
+loadtab(6,1) = 0.978
+loadtab(7,1) = 0.986
+loadtab(8,1) = 0.992
+loadtab(9,1) = 0.997
+loadtab(10,1) = 0.999
+loadtab(11,1) = 1
+

@@ -1,0 +1,58 @@
+C*****************************************************************
+C*** Export von Knotendaten eines Zyklus
+C*****************************************************************
+*DEL,coords
+
+/POST1
+
+*DO,loadstep,1,2,1
+
+loadstep = 3*steps+loadstep
+
+*DO,substep,1,nnssteps-1,1
+
+SET,loadstep,substep
+
+!letzte Ergebnisdatei löschen
+*DEL,coords
+
+! Modellebene exportieren
+ALLSEL
+ESEL,S,TYPE,,1
+NSLE
+*GET,NodeCount,NODE,,COUNT				! Get total number of Nodes
+
+ALLSEL
+*VGET,dEPTOXs,NODE,,EPTO,X
+*VGET,dEPTOYs,NODE,,EPTO,Y
+*VGET,dEPTOXYs,NODE,,EPTO,XY
+*VGET,dEPTOEQVs,NODE,,EPTO,EQV
+*VGET,dUXs,NODE,,U,X			
+*VGET,dUYs,NODE,,U,Y			
+*VGET,dUZs,NODE,,U,Z	
+		
+*DIM,coords,TABLE,NodeCount,11				! Prepare Output-File
+*VGET,coords(1,1),NODE,,NLIST					! Node index 
+*VGET,coords(1,2),NODE,coords(1,1),LOC,X			! Undeformed coordinates X
+*VGET,coords(1,3),NODE,coords(1,1),LOC,Y			! Undeformed coordinates Y
+*VGET,coords(1,4),NODE,coords(1,1),LOC,Z			! Undeformed coordinates Z
+!*VOPER,coords(1,5),coords(1,3),ADD,dUXs			! Deformed coordinates X
+!*VOPER,coords(1,6),coords(1,4),ADD,dUYs			! Deformed coordinates Y
+!*VOPER,coords(1,7),coords(1,5),ADD,dUZs			! Deformed coordinates Z
+*VGET,coords(1,5),NODE,coords(1,1),U,X			! Displacements X
+*VGET,coords(1,6),NODE,coords(1,1),U,Y			! Displacements Y
+*VGET,coords(1,7),NODE,coords(1,1),U,Z			! Displacements Z
+*VOPER,coords(1,8),dEPTOXs,MULT,100.0			! Total strains X
+*VOPER,coords(1,9),dEPTOYs,MULT,100.0			! Total strains Y
+*VOPER,coords(1,10),dEPTOXYs,MULT,0.5				! Total strains XY
+*VOPER,coords(1,11),dEPTOEQVs,MULT,100.0			! Total strains XY
+
+
+
+*MWRITE,coords(1),FEM_Cycle_nodedata_LST%loadstep%_SST%substep%_raw,txt
+(F9.1,';', F10.3,';', F10.3,';', F10.3,';', F10.3,';', F10.4,';', F10.4,';', F10.6,';', F10.6,';', F10.6,';', F10.6)
+
+*ENDDO
+*ENDDO
+
+

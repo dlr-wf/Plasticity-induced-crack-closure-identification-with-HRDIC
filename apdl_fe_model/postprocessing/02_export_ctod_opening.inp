@@ -1,0 +1,50 @@
+/POST1
+
+number_loadsteps = 3*steps+2
+number_substeps = nnssteps-1
+
+*DO,st_a,10,50,10
+
+ALLSEL
+ESEL,S,TYPE,,1
+NSLE
+NSEL,R,LOC,Y,0
+NSEL,R,LOC,Z,t
+crack_tip = a-offset+steps*esi
+crack_tip_shift = st_a*esi
+NSEL,R,LOC,X,crack_tip-crack_tip_shift-esi/2, crack_tip-crack_tip_shift+esi/2
+*GET,ctod_node,NODE,,NUM,MAX
+
+SET,number_loadsteps-2
+ref_uy_ctod = UY(ctod_node)
+
+*DEL,res
+
+*DIM,res,TABLE,number_substeps,5	
+*DO,substep,1,nnssteps-1,1
+
+	SET,number_loadsteps-1,substep
+	
+	res(substep,1) = substep
+	x = NX(ctod_node)
+	y = NY(ctod_node)
+	z = NZ(ctod_node)
+	
+	res(substep,2) = UY(ctod_node)
+
+*ENDDO
+
+!export
+*CFOPEN,ctod_opening_x%x%,txt,,
+*VWRITE,'load,','ctod'
+(A21,A21)
+*CFCLOS
+
+*CFOPEN,ctod_opening_x%x%,txt,,append
+*VWRITE,res(1,1),res(1,2)
+(F20.1,',',F20.15)
+*CFCLOS
+
+
+*ENDDO
+	

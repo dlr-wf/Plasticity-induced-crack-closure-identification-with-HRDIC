@@ -1,0 +1,47 @@
+/POST1
+
+number_loadsteps = 3*steps+2
+number_substeps = nnssteps-1
+
+ALLSEL
+ESEL,S,TYPE,,1
+NSLE
+NSEL,R,LOC,Y,0
+crack_tip = a-offset+steps*esi
+crack_tip_shift = 2*esi
+NSEL,R,LOC,X,crack_tip-crack_tip_shift-esi/2, crack_tip-crack_tip_shift+esi/2
+
+*GET,ctodnodes,NODE,0,COUNT
+
+cod_node = 0
+
+*DO,nodenum,1,ctodnodes,1
+
+cod_node = ndnext(cod_node)
+
+*DEL,res
+*DIM,res,TABLE,number_substeps,5	
+*DO,substep,1,nnssteps-1,1
+
+	SET,number_loadsteps,substep
+	
+	res(substep,1) = substep
+	xpos = NX(cod_node)
+	zpos = NZ(cod_node)
+	
+	res(substep,2) = UY(cod_node)
+
+*ENDDO
+
+!export
+*CFOPEN,ctod_closing_x%xpos%_z%zpos%,txt,,
+*VWRITE,'load,','ctod'
+(A21,A21)
+*CFCLOS
+
+*CFOPEN,ctod_closing_x%xpos%_z%zpos%,txt,,append
+*VWRITE,res(1,1),res(1,2)
+(F20.1,',',F20.15)
+*CFCLOS
+
+*ENDDO
